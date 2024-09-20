@@ -18,6 +18,8 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }} # script file is adjustable name, steps is the context that refer to steps in the current job, but we need to specify by id(publish)
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -25,6 +27,11 @@ jobs:
         run: npm ci
       - name: Build website
         run: npm run build
+      - name: Publish JS filename
+        id: publish # Nameing is adjustable, We setup the id to relate with the out put above
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # to specify that "script-file" is output
+        # run: find dist/assets/*.js -type f -execdir echo '::set-output name=script-file::{}' ';' # The alternative and old way to write the output
+        # run: find dist/assets/*.js -type f -execdir echo '{}' ';' # In case that the output file name is randomly generated, we can get that file name with this step (Just echo)
       - name: Upload Artifact # Get artifcat which is the output from the process
         uses: actions/upload-artifact@v3
         with:
@@ -43,6 +50,8 @@ jobs:
         with:
           name: dist-files # identify artfact name that we need to download, and unzip it. Noted; the folder dist wii be disappred and the content will contain inside the folder that download the file
       - name: Output Contents
-        run: ls  
+        run: ls
+      - name: Output filename # Get output from previous jobs
+        run: echo "${{ needs.build.outputs.script-file }}" # needs is context that contains output    
       - name: Deploy
         run: echo "Deploying..."
