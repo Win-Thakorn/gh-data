@@ -25,6 +25,14 @@ jobs:
         run: npm ci
       - name: Build website
         run: npm run build
+      - name: Upload Artifact # Get artifcat which is the output from the process
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files # File name
+          path: | # Location for store the file
+            dist
+            package.json
+           # !path/**/*.tmp # Exclude
   deploy:
     needs: build
     runs-on: ubuntu-latest
