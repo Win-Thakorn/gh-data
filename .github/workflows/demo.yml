@@ -28,14 +28,21 @@ jobs:
       - name: Upload Artifact # Get artifcat which is the output from the process
         uses: actions/upload-artifact@v3
         with:
-          name: dist-files # File name
-          path: | # Location for store the file
-            dist
-            package.json
+          name: dist-files # Folder of Artifact name
+          path: dist
+          # path: | # File that we want to structure in Artifact Folder
+          #   dist
+          #   package.json
            # !path/**/*.tmp # Exclude
   deploy:
-    needs: build
+    needs: build # Make sure to add needs everytime we want to download the artifact
     runs-on: ubuntu-latest
     steps:
+      - name: Get build artifacts # Each job is running on different machine, so we need to download artifact from previous job
+        uses: actions/downloadartifact@v3
+        with:
+          name: dist-files # identify artfact name that we need to download, and unzip it. Noted; the folder dist wii be disappred and the content will contain inside the folder that download the file
+      - name: Output Contents
+        run: ls  
       - name: Deploy
         run: echo "Deploying..."
