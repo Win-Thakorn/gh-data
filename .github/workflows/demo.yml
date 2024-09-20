@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get build artifacts # Each job is running on different machine, so we need to download artifact from previous job
-        uses: actions/downloadartifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: dist-files # identify artfact name that we need to download, and unzip it. Noted; the folder dist wii be disappred and the content will contain inside the folder that download the file
       - name: Output Contents
